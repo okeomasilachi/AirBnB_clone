@@ -11,10 +11,10 @@ class FileStorage:
     """
     The FileStorage class is used for storing and managing files.
     """
-    
+
     __file_path = "instances.json"
     __objects = {}
-    
+
     def all(self):
         """
         The function returns all objects stored in a FileStorage object.
@@ -53,7 +53,8 @@ class FileStorage:
         """
         file_path = FileStorage.__file_path
         if os.path.exists(file_path):
-            with open(F"{FileStorage.__file_path}", "r", encoding="utf-8") as file:
+            file = FileStorage.__file_path
+            with open(F"{file}", "r", encoding="utf-8") as file:
                 data = file.read()
                 FileStorage.__objects = json.loads(data)
             file.close()

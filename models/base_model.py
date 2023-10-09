@@ -4,7 +4,7 @@
 
 import uuid
 import datetime
-from . import storage # importing the storage variable from __init__
+from . import storage  # importing the storage variable from __init__
 
 
 class BaseModel:
@@ -21,7 +21,7 @@ class BaseModel:
                     if key in ["created_at", "updated_at"]:
                         value = datetime.datetime.fromisoformat(value)
                     setattr(self, key, value)
-        else:    
+        else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.datetime.now()
             self.updated_at = self.created_at
