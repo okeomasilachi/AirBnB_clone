@@ -1,8 +1,10 @@
 #!/usr/bin/python3
+
 """ This module contains the BaseModel class """
 
 import uuid
 import datetime
+from models import storage  # importing the storage variable from __init__
 
 
 class BaseModel:
@@ -19,10 +21,11 @@ class BaseModel:
                     if key in ["created_at", "updated_at"]:
                         value = datetime.datetime.fromisoformat(value)
                     setattr(self, key, value)
-        else:    
+        else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.datetime.now()
             self.updated_at = self.created_at
+            storage.new(self)
 
     def __str__(self):
         """ Returns the string representation of an object of the class """
@@ -34,6 +37,7 @@ class BaseModel:
         with the current datetime
         """
         self.updated_at = datetime.datetime.now()
+        storage.save()
 
     def to_dict(self):
         """
