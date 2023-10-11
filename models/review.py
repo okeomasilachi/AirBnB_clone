@@ -41,4 +41,3 @@ class Review(BaseModel):
                 "user_id": self.user_id,
                 "text": self.text
                 }
-

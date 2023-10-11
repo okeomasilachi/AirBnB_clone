@@ -37,8 +37,32 @@ if __name__ == "__main__":
 
 
         def default(self, line):
-            if line == "okeoma":
-                print("we did it")
+
+            if (st_idx := line.find(".all()")) != -1:
+                self.do_all(line[:st_idx])
+            elif (st_idx := line.find(".count()")) != -1:
+                i = 0
+                class_present = False
+                if os.path.exists("instances.json"):
+                    with open("instances.json", "r", encoding="utf-8") as file:
+                        data = file.read()
+                        data = json.loads(data)
+                        file.close()
+                    for key, value in data.items():
+                        if value["__class__"] == line[:st_idx]:
+                            class_present = True
+                            i += 1
+                    if class_present:
+                        print(i)
+                        i = 0
+                    elif not class_present:
+                        print("** class doesn't exist **")
+            elif (st_idx := line.find(".show(\"")) != -1 and line[-2] == "\")":
+                command = f"{line[:st_idx]} {line[st_idx + 7:-2]}"
+                self.do_show(command)
+            elif (st_idx := line.find(".destroy(\"")) != -1 and line[-2] == "\")":
+                command = f"{line[:st_idx]} {line[st_idx + 7:-2]}"
+                self.do_destroy(command)
             else:
                 super().default(line)
 
