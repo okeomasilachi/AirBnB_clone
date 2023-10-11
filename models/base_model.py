@@ -44,6 +44,7 @@ class BaseModel:
         returns a dictionary containing key/values of
         __dict__ of the instance
         """
+
         return {
                 "__class__": __class__.__name__,
                 "updated_at": self.updated_at.isoformat(),
