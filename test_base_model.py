@@ -2,9 +2,9 @@
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
-import cmd
 
-"""
+
+
 my_model = BaseModel()
 my_model.name = "My First Model"
 my_model.my_number = 89
@@ -28,9 +28,7 @@ print(type(my_new_model.created_at))
 
 print("--")
 print(my_model is my_new_model)
-"""
 
-"""
 all_objs = storage.all()
 print("-- Reloaded objects --")
 for obj_id in all_objs.keys():
@@ -43,45 +41,7 @@ my_model.name = "My_First_Model"
 my_model.my_number = 89
 my_model.save()
 print(my_model)
-"""
 
-
-"""
-class HBNB(cmd.Cmd):
-
-    prompt = "HBNB: "
-    def do_name(self, value):
-        if value:
-            print("Hi", value)
-        else:
-            print("Hello")
-
-    def do_Base(self, *args, **kwargs):
-        new = BaseModel(args, kwargs)
-        print(new.id)
-
-    def do_EOF(self, line):
-        return True
-
-    def emptyline(self):
-        pass
-
-    def default(self, line):
-        print("ERROR: '{}' Not a recognizes command or Syntax".format(line))
-
-
-if __name__ == "__main__":
-    import sys
-    do = False
-    app = HBNB()
-    if len(sys.argv) > 1:
-        do = True
-        app.onecmd(' '.join(sys.argv[1:]))
-    else:
-        app.cmdloop()
-    if not do:
-        print()
-"""
 all_objs = storage.all()
 print("-- Reloaded objects --")
 for obj_id in all_objs.keys():
@@ -89,7 +49,11 @@ for obj_id in all_objs.keys():
     print(obj)
 
 print("-- Create a new User --")
-my_user = BaseModel()
+my_user = User()
+my_user.first_name = "Betty"
+my_user.last_name = "Bar"
+my_user.email = "airbnb@mail.com"
+my_user.password = "root"
 my_user.save()
 print(my_user)
 

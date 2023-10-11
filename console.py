@@ -1,9 +1,17 @@
 #!/usr/bin/python3
 
+
 import cmd
 import json
 import os
-from models.base_model import BaseModel as Bm
+from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
+
 
 if __name__ == "__main__":
 
@@ -13,7 +21,6 @@ if __name__ == "__main__":
 
         def do_quit(self, line):
             """
-            quit
             quits the interpreter
             """
             exit(0)
@@ -28,16 +35,49 @@ if __name__ == "__main__":
         def help_EOF(self):
             print('\n'.join(['Quit command to exit the program']))
 
+
+        def default(self, line):
+            if line == "okeoma":
+                print("we did it")
+            else:
+                super().default(line)
+
         def emptyline(self):
             pass
 
         def do_create(self, line):
-            if not line:
+            args = line.split()
+            if not args:
                 print("** class name missing **")
-            elif line in ["BaseModel"]:
-                match line:
-                    case BaseModel:
-                        new = Bm()
+            elif args[0] in ["BaseModel", "User", "State", "City",
+                             "Amenity", "Place", "Review"]:
+                match args[0]:
+                    case "BaseModel":
+                        new = BaseModel()
+                        new.save()
+                        print(new.id)
+                    case "User":
+                        new = User()
+                        new.save()
+                        print(new.id)
+                    case "State":
+                        new = State()
+                        new.save()
+                        print(new.id)
+                    case "City":
+                        new = City()
+                        new.save()
+                        print(new.id)
+                    case "Amenity":
+                        new = Amenity()
+                        new.save()
+                        print(new.id)
+                    case "Place":
+                        new = Place()
+                        new.save()
+                        print(new.id)
+                    case "Review":
+                        new = Review()
                         new.save()
                         print(new.id)
             else:
@@ -57,7 +97,7 @@ if __name__ == "__main__":
                 print("** instance id missing **")
             else:
                 classname = args[0]
-                id = args[1]
+                identity = args[1]
                 data = None
                 class_present = False
                 class_id = False
@@ -69,7 +109,7 @@ if __name__ == "__main__":
                     for key, value in data.items():
                         if value["__class__"] == classname:
                             class_present = True
-                        if value["id"] == id and value["__class__"] == classname:
+                        if value["id"] == identity and value["__class__"] == classname:
                             class_id = True
                             print(f"[{value['__class__']}] "
                                   f"({value['id']}) {value}")
@@ -185,13 +225,12 @@ if __name__ == "__main__":
                             class_present = True
                         if value["id"] == args[1] and value["__class__"] == args[0]:
                             class_id = True
-                            var = args[3]
-                            print(var[1:-1])
+                            var = args[3].replace('\"', '')
+                            value[args[2]] = var
                     if class_present and class_id:
                         with open("instances.json", "w", encoding="utf-8") as file:
                             file.write(json.dumps(data))
                             file.close()
-
                     if class_present and not class_id:
                         print("** no instance found **")
                     elif not class_present:

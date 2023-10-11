@@ -1,13 +1,16 @@
+#!/usr/bin/python3
+
+""" This module contains the BaseModel class """
+
 from models.base_model import BaseModel
 import datetime
 from models import storage
-class User(BaseModel):
 
+
+class City(BaseModel):
     def __init__(self):
-        self.email = ""
-        self.password = ""
-        self.first_name = ""
-        self.last_name = ""
+        self.state_id = ""
+        self.name = ""
         super().__init__()
 
     def __str__(self):
@@ -22,7 +25,6 @@ class User(BaseModel):
         self.updated_at = datetime.datetime.now()
         storage.save()
 
-
     def to_dict(self):
         """
         returns a dictionary containing key/values of
@@ -33,8 +35,6 @@ class User(BaseModel):
                 "updated_at": self.updated_at.isoformat(),
                 "created_at": self.created_at.isoformat(),
                 "id": self.id,
-                "email": self.email,
-                "password": self.password,
-                "first_name": self.first_name,
-                "last_name": self.last_name
+                "state_id": self.state_id,
+                "name": self.name
                 }
