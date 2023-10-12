@@ -7,9 +7,14 @@ import datetime
 from models import storage
 
 
+# The Review class is a subclass of the BaseModel class.
 class Review(BaseModel):
 
     def __init__(self):
+        """
+        initializes three instance variables: place_id,
+        user_id, and text.
+        """
         self.place_id = ""
         self.user_id = ""
         self.text = ""

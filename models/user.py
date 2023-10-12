@@ -1,9 +1,16 @@
 from models.base_model import BaseModel
 import datetime
 from models import storage
+
+
+# The above class is a subclass of BaseModel and represents a user.
 class User(BaseModel):
 
     def __init__(self):
+        """
+        initializes the attributes email, password, first_name,
+        and last_name with empty strings.
+        """
         self.email = ""
         self.password = ""
         self.first_name = ""
@@ -21,7 +28,6 @@ class User(BaseModel):
         """
         self.updated_at = datetime.datetime.now()
         storage.save()
-
 
     def to_dict(self):
         """

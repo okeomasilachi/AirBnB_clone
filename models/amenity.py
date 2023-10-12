@@ -9,9 +9,13 @@ import datetime
 from models import storage
 
 
+# The class "Amenity" is a subclass of "BaseModel".
 class Amenity(BaseModel):
 
     def __init__(self):
+        """
+        initializes the "name" attribute of an object.
+        """
         self.name = ""
         super().__init__()
 
