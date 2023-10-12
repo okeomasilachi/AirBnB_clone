@@ -4,6 +4,7 @@
 import cmd
 import json
 import os
+import re
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -12,6 +13,9 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 
+pt1 = r'\.show\("'
+pt2 = r'\.destroy\("'
+pt3 = r'\.update\("'
 
 if __name__ == "__main__":
 
@@ -37,7 +41,6 @@ if __name__ == "__main__":
 
 
         def default(self, line):
-
             if (st_idx := line.find(".all()")) != -1:
                 self.do_all(line[:st_idx])
             elif (st_idx := line.find(".count()")) != -1:
@@ -57,12 +60,19 @@ if __name__ == "__main__":
                         i = 0
                     elif not class_present:
                         print("** class doesn't exist **")
-            elif (st_idx := line.find(".show(\"")) != -1 and line[-2] == "\")":
-                command = f"{line[:st_idx]} {line[st_idx + 7:-2]}"
-                self.do_show(command)
-            elif (st_idx := line.find(".destroy(\"")) != -1 and line[-2] == "\")":
-                command = f"{line[:st_idx]} {line[st_idx + 7:-2]}"
-                self.do_destroy(command)
+            elif re.finditer(f'{pt1}|{pt2}|{pt3}', line) and line[-2:] == '")':
+                match = re.finditer(f'{pt1}|{pt2}', line)
+                for mat in match:
+                    if mat.group() == '.destroy("':
+                        st_idx = line.find('.destroy("')
+                        command = f"{line[:st_idx]} {line[st_idx + 10:-2]}"
+                        self.do_destroy(command)
+                    elif mat.group() == '.show("':
+                        st_idx = line.find('.show("')
+                        command = f"{line[:st_idx]} {line[st_idx + 7:-2]}"
+                        self.do_show(command)
+                    elif mat.group() == '.update("':
+                        print("update")
             else:
                 super().default(line)
 
