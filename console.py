@@ -5,20 +5,59 @@ import cmd
 import json
 import os
 import re
-from models.base_model import BaseModel
-from models.user import User
-from models.state import State
-from models.city import City
 from models.amenity import Amenity
+from models.base_model import BaseModel
+from models.city import City
 from models.place import Place
 from models.review import Review
+from models.state import State
+from models.user import User
 
 
 if __name__ == "__main__":
 
+    def read_file(caller=""):
+        data = {}
+        try:
+            with open("instances.json", "r", encoding="utf-8") as file:
+                data = file.read()
+                data = json.loads(data)
+                file.close()
+        except Exception as e:
+            print(f"{caller} Error: {e} {e.args}")
+        return data
+
+    def write_file(data={}, caller=""):
+        try:
+            with open("instances.json", "w", encoding="utf-8") as file:
+                file.write(json.dumps(data))
+                file.close()
+                return True
+        except Exception as e:
+            print(f"{caller} Error: {e} {e.args}")
+
+    def update_line_check(line):
+        if line[-2:] == '")' or line[-1] == ")" and \
+                                    line[-2].isnumeric() or line[-1] == ")":
+            return True
+        else:
+            return False
+
+
     pt1 = r'\.show\("'
     pt2 = r'\.destroy\("'
     pt3 = r'\.update\("'
+
+    def check_all_conditions(line):
+        if re.finditer(f'{pt1}|{pt2}|{pt3}', line) and \
+                line[-2:] == '")' or re.finditer(r'\d\)$', line[-2]):
+            return True
+        else:
+            return False
+
+
+    Models = ["BaseModel", "User", "State", "City",
+              "Amenity", "Place", "Review"]
 
     # The HBNBCommand class is a subclass of the cmd.Cmd class in Python.
     class HBNBCommand(cmd.Cmd):
@@ -67,73 +106,86 @@ if __name__ == "__main__":
               line: string that represents the input command or statement that
                 needs to be processed.
             """
-            if (st_idx := line.find(".all()")) != -1:
-                self.do_all(line[:st_idx])
-            elif (st_idx := line.find(".count()")) != -1:
-                i = 0
-                class_present = False
-                if os.path.exists("instances.json"):
-                    with open("instances.json", "r", encoding="utf-8") as file:
-                        data = file.read()
-                        data = json.loads(data)
-                        file.close()
-                    for key, value in data.items():
-                        if value["__class__"] == line[:st_idx]:
-                            class_present = True
-                            i += 1
-                    if class_present:
-                        print(i)
-                        i = 0
-                    elif not class_present:
+            try:
+                if line.find(".all()") != -1:
+                    st_idx = line.find(".all()")
+                    self.do_all(line[:st_idx])
+                elif line.find(".count()") != -1:
+                    st_idx = line.find(".count()")
+                    i = 0
+                    class_present = False
+                    if os.path.exists("instances.json"):
+                        data = read_file("Count")
+                        for key, value in data.items():
+                            if value["__class__"] == line[:st_idx]:
+                                class_present = True
+                                i += 1
+                        if class_present:
+                            print(i)
+                        elif not class_present:
+                            print("** class doesn't exist **")
+                    else:
                         print("** class doesn't exist **")
-            elif re.finditer(f'{pt1}|{pt2}|{pt3}', line) and \
-                    line[-2:] == '")' or re.finditer(r'\d\)$', line[-2]):
-
-                match = re.finditer(f'{pt1}|{pt2}|{pt3}', line)
-                for mat in match:
-                    if mat.group() == '.destroy("':
-                        st_idx = line.find('.destroy("')
-                        command = f"{line[:st_idx]} {line[st_idx + 10:-2]}"
-                        self.do_destroy(command)
-                    elif mat.group() == '.show("':
-                        st_idx = line.find('.show("')
-                        command = f"{line[:st_idx]} {line[st_idx + 7:-2]}"
-                        self.do_show(command)
-                    elif mat.group() == '.update("':
-                        my_list = []
-                        split_text = re.split(r'[\s, ", \, \), \(]', line)
-                        for arg in split_text:
-                            if arg != '':
-                                my_list.append(arg)
-                        my_list[0] = my_list[0][:-7]
-                        list_length = len(my_list)
-                        if list_length > 0:
-                            class_name = my_list[0]
-                            command = class_name
-                            if list_length > 1:
-                                instance_id = my_list[1]
-                                command += f" {instance_id}"
-                                if list_length > 2:
-                                    attribute_name = my_list[2]
-                                    command += f" {attribute_name}"
-                                    if list_length > 3:
-                                        attribute_value = my_list[3]
-                                        command += f" {attribute_value}"
-                                        self.do_update(command)
-                                    else:
-                                        c_m_d = (f"{class_name} {instance_id} "
-                                                 f"{attribute_name}")
-                                        self.do_update(c_m_d)
-                                else:
-                                    command = f"{class_name} {instance_id}"
-                                    self.do_update(command)
+                elif check_all_conditions(line):
+                    call = True
+                    match = re.finditer(f'{pt1}|{pt2}|{pt3}', line)
+                    for mat in match:
+                        if mat.group() == '.destroy("':
+                            call = False
+                            st_idx = line.find('.destroy("')
+                            if line[-2:] == '")':
+                                command = (f"{line[:st_idx]} "
+                                           f"{line[st_idx + 10:-2]}")
+                                self.do_destroy(command)
                             else:
-                                command = f"{class_name}"
-                                self.do_update(command)
-                        else:
-                            command = f"{class_name}"
-                            self.do_update(command)
-            else:
+                                super().default(line)
+                        elif mat.group() == '.show("':
+                            call = False
+                            st_idx = line.find('.show("')
+                            if line[-2:] == '")':
+                                command = (f"{line[:st_idx]} "
+                                           f"{line[st_idx + 7:-2]}")
+                                self.do_show(command)
+                            else:
+                                super().default(line)
+                        elif mat.group() == '.update("':
+                            call = False
+                            if update_line_check(line):
+                                my_list = []
+                                split_text = re.split(r'[\s, ", \, \), \(]', line)
+                                for arg in split_text:
+                                    if arg != '':
+                                        my_list.append(arg)
+                                my_list[0] = my_list[0][:-7]
+                                list_length = len(my_list)
+                                if list_length > 0:
+                                    class_name = my_list[0]
+                                    command = class_name
+                                    if list_length > 1:
+                                        instance_id = my_list[1]
+                                        command += f" {instance_id}"
+                                        if list_length > 2:
+                                            attribute_name = my_list[2]
+                                            command += f" {attribute_name}"
+                                            if list_length > 3:
+                                                attribute_value = my_list[3]
+                                                command += f" {attribute_value}"
+                                                self.do_update(command)
+                                            else:
+                                                self.do_update(command)
+                                        else:
+                                            self.do_update(command)
+                                    else:
+                                        self.do_update(command)
+                                else:
+                                    pass
+                            else:
+                                super().default(line)
+                    if call:
+                        super().default(line)
+                else:
+                    super().default(line)
+            except IndexError as e:
                 super().default(line)
 
         def emptyline(self):
@@ -156,37 +208,35 @@ if __name__ == "__main__":
             args = line.split()
             if not args:
                 print("** class name missing **")
-            elif args[0] in ["BaseModel", "User", "State", "City",
-                             "Amenity", "Place", "Review"]:
-                match args[0]:
-                    case "BaseModel":
-                        new = BaseModel()
-                        new.save()
-                        print(new.id)
-                    case "User":
-                        new = User()
-                        new.save()
-                        print(new.id)
-                    case "State":
-                        new = State()
-                        new.save()
-                        print(new.id)
-                    case "City":
-                        new = City()
-                        new.save()
-                        print(new.id)
-                    case "Amenity":
-                        new = Amenity()
-                        new.save()
-                        print(new.id)
-                    case "Place":
-                        new = Place()
-                        new.save()
-                        print(new.id)
-                    case "Review":
-                        new = Review()
-                        new.save()
-                        print(new.id)
+            elif args[0] in Models:
+                if args[0] == "BaseModel":
+                    new = BaseModel()
+                    new.save()
+                    print(new.id)
+                if args[0] == "User":
+                    new = User()
+                    new.save()
+                    print(new.id)
+                if args[0] == "State":
+                    new = State()
+                    new.save()
+                    print(new.id)
+                if args[0] == "City":
+                    new = City()
+                    new.save()
+                    print(new.id)
+                if args[0] == "Amenity":
+                    new = Amenity()
+                    new.save()
+                    print(new.id)
+                if args[0] == "Place":
+                    new = Place()
+                    new.save()
+                    print(new.id)
+                if args[0] == "Review":
+                    new = Review()
+                    new.save()
+                    print(new.id)
             else:
                 print("** class doesn't exist **")
 
@@ -218,14 +268,10 @@ if __name__ == "__main__":
             else:
                 class_name = args[0]
                 identity = args[1]
-                data = None
                 class_present = False
                 class_id = False
                 if os.path.exists("instances.json"):
-                    with open("instances.json", "r", encoding="utf-8") as file:
-                        data = file.read()
-                        data = json.loads(data)
-                        file.close()
+                    data = read_file("Show")
                     for key, value in data.items():
                         if value["__class__"] == class_name:
                             class_present = True
@@ -238,6 +284,8 @@ if __name__ == "__main__":
                         print("** no instance found **")
                     elif not class_present:
                         print("** class doesn't exist **")
+                else:
+                    print("** class doesn't exist **")
 
         def help_show(self):
             """
@@ -263,30 +311,26 @@ if __name__ == "__main__":
                 print("** instance id missing **")
             else:
                 class_name = args[0]
-                id = args[1]
-                data = None
+                instance_id = args[1]
                 class_present = False
                 class_id = False
                 if os.path.exists("instances.json"):
-                    with open("instances.json", "r", encoding="utf-8") as file:
-                        data = file.read()
-                        data = json.loads(data)
-                        file.close()
+                    data = read_file("Destroy")
                     for key, value in data.items():
                         if value["__class__"] == class_name:
                             class_present = True
-                        if value["id"] == id and \
+                        if value["id"] == instance_id and \
                                 value["__class__"] == class_name:
                             class_id = True
                     if class_present and class_id:
-                        del data[f"{class_name}.{id}"]
-                        with open("instances.json", "w", encoding="utf-8") \
-                                as file:
-                            file.write(json.dumps(data))
+                        del data[f"{class_name}.{instance_id}"]
+                        write_file(data, "Destroy")
                     if class_present and not class_id:
                         print("** no instance found **")
                     elif not class_present:
                         print("** class doesn't exist **")
+                else:
+                    print("** class name missing **")
 
         def help_destroy(self):
             """
@@ -309,15 +353,12 @@ if __name__ == "__main__":
                 return_list = []
                 class_present = False
                 if os.path.exists("instances.json"):
-                    with open("instances.json", "r", encoding="utf-8") as file:
-                        data = file.read()
-                        data = json.loads(data)
-                        file.close()
+                    data = read_file("All")
                     for key, value in data.items():
                         if value["__class__"] == args[0]:
                             class_present = True
                             return_list.append(f"[{value['__class__']}] "
-                                        f"({value['id']}) {value}")
+                                               f"({value['id']}) {value}")
                     if class_present:
                         print(return_list)
                     elif not class_present:
@@ -327,13 +368,10 @@ if __name__ == "__main__":
             elif len(line) < 1:
                 return_list = []
                 if os.path.exists("instances.json"):
-                    with open("instances.json", "r", encoding="utf-8") as file:
-                        data = file.read()
-                        data = json.loads(data)
-                        file.close()
+                    data = read_file("All")
                     for key, value in data.items():
                         return_list.append(f"[{value['__class__']}] "
-                                    f"({value['id']}) {value}")
+                                           f"({value['id']}) {value}")
                     print(return_list)
             else:
                 self.default(line)
@@ -357,24 +395,20 @@ if __name__ == "__main__":
                 instruction that the user wants to execute.
             """
             args = line.split()
-            data = None
             class_present = False
             class_id = False
-            match len(args):
-                case 3:
-                    print("** value missing **")
-                case 2:
-                    print("** attribute name missing **")
-                case 1:
-                    print("** instance id missing **")
-                case 0:
-                    print("** class name missing **")
+            length = len(args)
+            if length == 3:
+                print("** value missing **")
+            elif length == 2:
+                print("** attribute name missing **")
+            elif length == 1:
+                print("** instance id missing **")
+            elif length == 0:
+                print("** class name missing **")
             if len(args) >= 4:
                 if os.path.exists("instances.json"):
-                    with open("instances.json", "r", encoding="utf-8") as file:
-                        data = file.read()
-                        data = json.loads(data)
-                        file.close()
+                    data = read_file("Update")
                     for key, value in data.items():
                         if value["__class__"] == args[0]:
                             class_present = True
@@ -382,16 +416,21 @@ if __name__ == "__main__":
                                 value["__class__"] == args[0]:
                             class_id = True
                             var = args[3].replace('\"', '')
-                            value[args[2]] = var
+                            if var.isdigit():
+                                if var.find("."):
+                                    value[args[2]] = float(var)
+                                else:
+                                    value[args[2]] = int(var)
+                            else:
+                                value[args[2]] = var
                     if class_present and class_id:
-                        with open("instances.json", "w", encoding="utf-8") \
-                                as file:
-                            file.write(json.dumps(data))
-                            file.close()
+                        write_file(data, "Update")
                     if class_present and not class_id:
                         print("** no instance found **")
                     elif not class_present:
                         print("** class doesn't exist **")
+                else:
+                    print("** class name missing **")
 
         def help_update(self):
             """

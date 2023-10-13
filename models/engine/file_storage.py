@@ -54,7 +54,7 @@ class FileStorage:
         file_path = FileStorage.__file_path
         if os.path.exists(file_path):
             file = FileStorage.__file_path
-            with open(F"{file}", "r", encoding="utf-8") as file:
+            with open(f"{file}", "r", encoding="utf-8") as file:
                 data = file.read()
                 FileStorage.__objects = json.loads(data)
             file.close()
