@@ -23,15 +23,24 @@ if __name__ == "__main__":
     class_name_pattern = r'(.+?)\.update'
     pt1 = r'\.show\("'  # <class name>.show(<id>)
     pt2 = r'\.destroy\("'  # <class name>.destroy(<id>)
-    pt3 = r'\.update\("'  # <class name>.update(<id>, <attribute name>, <attribute value>)
+    pt3 = r'\.update\("'
+    # <class name>.update(<id>, <attribute name>, <attribute value>)
 
     # Inbuilt Models
     Models = ["BaseModel", "User", "State", "City",
               "Amenity", "Place", "Review"]
 
-
     def read_file(caller=""):
+        """
+        reads from a .json file
 
+        Args:
+            caller: name of calling function. default to "".
+
+        Returns:
+            dict: python dict object with data if no exceptions,
+                else an empty dictionary is returned
+        """
         data = {}
         try:
             with open("instances.json", "r", encoding="utf-8") as file:
@@ -43,6 +52,16 @@ if __name__ == "__main__":
         return data
 
     def write_file(data={}, caller=""):
+        """
+        writes to a .json file
+
+        Args:
+            data: defaults to empty dictionary if no arguments
+            caller: name of calling function. default to "".
+
+        Returns:
+            Bool: True on success
+        """
         try:
             with open("instances.json", "w", encoding="utf-8") as file:
                 file.write(json.dumps(data))
@@ -50,22 +69,50 @@ if __name__ == "__main__":
                 return True
         except Exception as e:
             print(f"{caller} Error: {e} {e.args}")
+            return False
 
     def update_line_check(line):
+        """
+        checks condition for update features
+
+        Args:
+            line: string representation of command
+
+        Returns:
+            Bool: True if conditions passes else False
+        """
         if line[-2:] == '")' or line[-1] == ")" and \
-                                    line[-2].isnumeric() or line[-1] == ")":
+                line[-2].isnumeric() or line[-1] == ")":
             return True
         else:
             return False
 
     def update_line_dict_check(line):
+        """
+        checks condition for update features for dictionaries
+
+        Args:
+            line: string representation of command
+
+        Returns:
+            Bool: True if conditions passes else False
+        """
         if re.search(dictionary_pattern, line):
             return True
         else:
             return False
 
-
     def update_to_dict(line):
+        """
+        handles parsing of command from commandline
+        for updating with dictionary
+
+        Args:
+            line: string representation of command
+
+        Returns:
+            Tuple: class name, uuid, dictionary
+        """
         uuid_match = re.search(uuid_pattern, line)
         dictionary_match = re.search(dictionary_pattern, line)
         class_name_match = re.search(class_name_pattern, line)
@@ -82,16 +129,25 @@ if __name__ == "__main__":
         return cls_name, uuid, d
 
     def check_all_conditions(line):
+        """
+        checks condition for .show, .destroy and .update features
+
+        Args:
+            line: string representation of command
+
+        Returns:
+            Bool: True if conditions passes else False
+        """
         if re.finditer(f'{pt1}|{pt2}|{pt3}', line) and \
                 line[-2:] == '")' or re.finditer(r'\d\)$', line[-2]):
             return True
         else:
             return False
 
-
-    # The HBNBCommand class is a subclass of the cmd.Cmd class in Python.
     class HBNBCommand(cmd.Cmd):
-
+        """
+        The HBNBCommand class is a subclass of the cmd.Cmd class in Python.
+        """
         prompt = "(hbnb) "
 
         def do_quit(self, line):
@@ -183,11 +239,13 @@ if __name__ == "__main__":
                             if update_line_dict_check(line):
                                 cls_name, u_id, dic = update_to_dict(line)
                                 for key, value in dic.items():
-                                    command = f"{cls_name} {u_id} {key} {value}"
+                                    command = (f"{cls_name} {u_id} "
+                                               f"{key} {value}")
                                     self.do_update(command)
                             elif update_line_check(line):
                                 my_list = []
-                                split_text = re.split(r'[\s, ", \, \), \(]', line)
+                                split_text = re.split(r'[\s, ", \, \), \(]',
+                                                      line)
                                 for arg in split_text:
                                     if arg != '':
                                         my_list.append(arg)
@@ -204,7 +262,8 @@ if __name__ == "__main__":
                                             command += f" {attribute_name}"
                                             if list_length > 3:
                                                 attribute_value = my_list[3]
-                                                command += f" {attribute_value}"
+                                                command += \
+                                                    f" {attribute_value}"
                                                 self.do_update(command)
                                             else:
                                                 self.do_update(command)
@@ -229,6 +288,7 @@ if __name__ == "__main__":
             serves as a placeholder.
             """
             pass
+
 
         def do_create(self, line):
             """
