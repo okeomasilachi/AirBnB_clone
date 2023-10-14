@@ -7,8 +7,13 @@ import datetime
 from models import storage
 
 
+# The above class is a subclass of BaseModel representing a city.
 class City(BaseModel):
     def __init__(self):
+        """
+        initializes the state_id and name attributes of an
+        object.
+        """
         self.state_id = ""
         self.name = ""
         super().__init__()
