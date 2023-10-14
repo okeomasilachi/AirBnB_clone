@@ -289,7 +289,6 @@ if __name__ == "__main__":
             """
             pass
 
-
         def do_create(self, line):
             """
             creates a new instance of a class based on the input argument
