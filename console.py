@@ -16,7 +16,22 @@ from models.user import User
 
 if __name__ == "__main__":
 
+    # Regex patterns
+    uuid_pattern = (r"\b[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-"
+                    r"[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\b")
+    dictionary_pattern = r"\{.*\}"
+    class_name_pattern = r'(.+?)\.update'
+    pt1 = r'\.show\("'  # <class name>.show(<id>)
+    pt2 = r'\.destroy\("'  # <class name>.destroy(<id>)
+    pt3 = r'\.update\("'  # <class name>.update(<id>, <attribute name>, <attribute value>)
+
+    # Inbuilt Models
+    Models = ["BaseModel", "User", "State", "City",
+              "Amenity", "Place", "Review"]
+
+
     def read_file(caller=""):
+
         data = {}
         try:
             with open("instances.json", "r", encoding="utf-8") as file:
@@ -43,10 +58,28 @@ if __name__ == "__main__":
         else:
             return False
 
+    def update_line_dict_check(line):
+        if re.search(dictionary_pattern, line):
+            return True
+        else:
+            return False
 
-    pt1 = r'\.show\("'
-    pt2 = r'\.destroy\("'
-    pt3 = r'\.update\("'
+
+    def update_to_dict(line):
+        uuid_match = re.search(uuid_pattern, line)
+        dictionary_match = re.search(dictionary_pattern, line)
+        class_name_match = re.search(class_name_pattern, line)
+
+        cls_name = class_name_match.group()
+        cls_name = cls_name[:-7]
+
+        uuid = uuid_match.group()
+
+        d = dictionary_match.group()
+        d = d.replace("'", '"')
+        d = json.loads(d)
+
+        return cls_name, uuid, d
 
     def check_all_conditions(line):
         if re.finditer(f'{pt1}|{pt2}|{pt3}', line) and \
@@ -55,9 +88,6 @@ if __name__ == "__main__":
         else:
             return False
 
-
-    Models = ["BaseModel", "User", "State", "City",
-              "Amenity", "Place", "Review"]
 
     # The HBNBCommand class is a subclass of the cmd.Cmd class in Python.
     class HBNBCommand(cmd.Cmd):
@@ -150,7 +180,12 @@ if __name__ == "__main__":
                                 super().default(line)
                         elif mat.group() == '.update("':
                             call = False
-                            if update_line_check(line):
+                            if update_line_dict_check(line):
+                                cls_name, u_id, dic = update_to_dict(line)
+                                for key, value in dic.items():
+                                    command = f"{cls_name} {u_id} {key} {value}"
+                                    self.do_update(command)
+                            elif update_line_check(line):
                                 my_list = []
                                 split_text = re.split(r'[\s, ", \, \), \(]', line)
                                 for arg in split_text:
@@ -417,10 +452,10 @@ if __name__ == "__main__":
                             class_id = True
                             var = args[3].replace('\"', '')
                             if var.isdigit():
-                                if var.find("."):
-                                    value[args[2]] = float(var)
+                                if float(var).is_integer():
+                                    value[args[2]] = int(float(var))
                                 else:
-                                    value[args[2]] = int(var)
+                                    value[args[2]] = float(var)
                             else:
                                 value[args[2]] = var
                     if class_present and class_id:
