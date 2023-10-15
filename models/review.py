@@ -7,42 +7,42 @@ import datetime
 from models import storage
 
 
-# The Review class is a subclass of the BaseModel class.
+# The above class is a subclass of BaseModel and represents a Review.
 class Review(BaseModel):
 
-    def __init__(self):
+    place_id = ""
+    user_id = ""
+    text = ""
+
+    def __init__(self, *args, **kwargs):
         """
-        initializes three instance variables: place_id,
-        user_id, and text.
+        initializes the attributes email, password, first_name,
+        and last_name with empty strings.
         """
-        self.place_id = ""
-        self.user_id = ""
-        self.text = ""
-        super().__init__()
+        if kwargs:
+            for key, value in kwargs.items():
+                if key != "__class__":
+                    if key in ["created_at", "updated_at"]:
+                        value = datetime.datetime.fromisoformat(value)
+                    setattr(self, key, value)
+        else:
+            super().__init__()
 
     def __str__(self):
         """ Returns the string representation of an object of the class """
         return f"[{__class__.__name__}] ({self.id}) ({self.__dict__})"
 
     def save(self):
-        """
-        Updates the public instance attribute updated_at
-        with the current datetime
-        """
         self.updated_at = datetime.datetime.now()
+        now = self.__dict__
+        now['__class__'] = self.__class__.__name__
+        now['updated_at'] = self.updated_at.isoformat()
+        now['created_at'] = self.created_at.isoformat()
+        update_instance = eval(self.__class__.__name__)(**now)
+        storage.new(update_instance)
         storage.save()
 
     def to_dict(self):
-        """
-        returns a dictionary containing key/values of
-        __dict__ of the instance
-        """
-        return {
-                "__class__": __class__.__name__,
-                "updated_at": self.updated_at.isoformat(),
-                "created_at": self.created_at.isoformat(),
-                "id": self.id,
-                "place_id": self.place_id,
-                "user_id": self.user_id,
-                "text": self.text
-                }
+        now = self.__dict__
+        now['__class__'] = self.__class__.__name__
+        return now

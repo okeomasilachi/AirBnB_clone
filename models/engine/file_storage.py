@@ -5,6 +5,16 @@
 
 import json
 import os
+from json import JSONEncoder
+import datetime
+
+
+class DateTimeEncoder(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        return super().default(obj)
+
 
 
 class FileStorage:
@@ -44,8 +54,7 @@ class FileStorage:
         in JSON format.
         """
         with open(FileStorage.__file_path, "w", encoding="utf-8") as file:
-            file.write(json.dumps(FileStorage.__objects))
-        file.close()
+            json.dump(FileStorage.__objects, file, cls=DateTimeEncoder)
 
     def reload(self):
         """

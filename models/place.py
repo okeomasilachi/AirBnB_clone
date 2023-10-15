@@ -7,57 +7,50 @@ import datetime
 from models import storage
 
 
-# The above class is a subclass of BaseModel and represents a place.
+# The above class is a subclass of BaseModel and represents a Place.
 class Place(BaseModel):
 
-    def __init__(self):
+    city_id = ""
+    user_id = ""
+    name = ""
+    description = ""
+    number_rooms = 0
+    number_bathrooms = 0
+    max_guest = 0
+    price_by_night = 0
+    latitude = 0.0
+    longitude = 0.0
+    amenity_ids = []
+
+    def __init__(self, *args, **kwargs):
         """
-        initializes various attributes of a class.
+        initializes the attributes email, password, first_name,
+        and last_name with empty strings.
         """
-        self.city_id = ""
-        self.user_id = ""
-        self.name = ""
-        self.description = ""
-        self.number_rooms = 0
-        self.number_bathrooms = 0
-        self.max_guest = 0
-        self.price_by_night = 0
-        self.latitude = 0.0
-        self.longitude = 0.0
-        self.amenity_ids = []
-        super().__init__()
+        if kwargs:
+            for key, value in kwargs.items():
+                if key != "__class__":
+                    if key in ["created_at", "updated_at"]:
+                        value = datetime.datetime.fromisoformat(value)
+                    setattr(self, key, value)
+        else:
+            super().__init__()
 
     def __str__(self):
         """ Returns the string representation of an object of the class """
         return f"[{__class__.__name__}] ({self.id}) ({self.__dict__})"
 
     def save(self):
-        """
-        Updates the public instance attribute updated_at
-        with the current datetime
-        """
         self.updated_at = datetime.datetime.now()
+        now = self.__dict__
+        now['__class__'] = self.__class__.__name__
+        now['updated_at'] = self.updated_at.isoformat()
+        now['created_at'] = self.created_at.isoformat()
+        update_instance = eval(self.__class__.__name__)(**now)
+        storage.new(update_instance)
         storage.save()
 
     def to_dict(self):
-        """
-        returns a dictionary containing key/values of
-        __dict__ of the instance
-        """
-        return {
-                "__class__": __class__.__name__,
-                "updated_at": self.updated_at.isoformat(),
-                "created_at": self.created_at.isoformat(),
-                "id": self.id,
-                "city_id": self.city_id,
-                "user_id": self.user_id,
-                "name": self.name,
-                "description": self.description,
-                "number_rooms": self.number_rooms,
-                "number_bathrooms": self.number_bathrooms,
-                "max_guest": self.max_guest,
-                "price_by_night": self.price_by_night,
-                "latitude": self.latitude,
-                "longitude": self.longitude,
-                "amenity_ids": self.amenity_ids
-                }
+        now = self.__dict__
+        now['__class__'] = self.__class__.__name__
+        return now
