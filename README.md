@@ -10,7 +10,6 @@ The command interpreter is a tool that allows users to interact with the applica
 
 To start the command interpreter, run the following command:
 
-```bash
 $ ./console.py
 How to Use the Command Interpreter
 Once the command interpreter is running, you can use the following commands:
