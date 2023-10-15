@@ -38,6 +38,7 @@ Exits the program.
 ```
 
 <br>
+
 `destroy <class_name> <id>`: Deletes an instance based on the class name and ID, and saves the change to the JSON file.
 
 
@@ -50,6 +51,8 @@ Exits the program.
 
 `all [class_name]`: Prints all string representations of instances of the specified class. If no class name is provided, it prints all instances of all classes.
 
+
+<br>
 
 ***Example***: 
 ```Bash
@@ -88,35 +91,55 @@ Creating an instance of BaseModel:
 
 Showing an instance:
 
-$ show BaseModel 1234-1234-1234
+```Bash
+(hbnb) show BaseModel 1234-1234-1234
+```
+
 Destroying an instance:
 
-$ destroy BaseModel 1234-1234-1234
+```Bash
+(hbnb) destroy BaseModel 1234-1234-1234
+```
+
 Retrieving all instances of BaseModel:
 
-$ BaseModel.all()
+```Bash
+(hbnb) BaseModel.all()
+```
+
 Retrieving the number of instances of BaseModel:
 
-$ BaseModel.count()
+```Bash
+(hbnb) BaseModel.count()
+```
+
 Retrieving an instance by ID:
 
-$ BaseModel.show(1234-1234-1234)
+```Bash
+(hbnb) BaseModel.show(1234-1234-1234)
+```
+
 Destroying an instance by ID:
 
-$ BaseModel.destroy(1234-1234-1234)
+```Bash
+(hbnb) BaseModel.destroy(1234-1234-1234)
+```
+
 Updating an instance using attribute name and value:
 
-$ update BaseModel 1234-1234-1234 email "aibnb@mail.com"
-
+```Bash
+(hbnb) update BaseModel 1234-1234-1234 email "aibnb@mail.com"
+```
 
 Updating an instance using a dictionary representation:
 
 ```Bash
-$ update BaseModel 1234-1234-1234 {'email': 'aibnb@mail.com', 'first_name': 'John'}
+(hbnb) update BaseModel 1234-1234-1234 {'email': 'aibnb@mail.com', 'first_name': 'John'}
 ```
 <br>
 
 ### File Storage
+
 The File Storage class handles the serialization and deserialization of instances to and from a JSON file. It manages instances of the following classes: BaseModel, Place, State, City, Amenity, and Review.
 
 ![start](imgs/img3.png)
@@ -124,8 +147,9 @@ The File Storage class handles the serialization and deserialization of instance
 Usage
 To use the application, follow these steps:
 
-Clone the repository.
-Run the command interpreter using ./console.py.
-Use the available commands to interact with the application.
-Dependencies
+- Clone the repository.
+- Run the command interpreter using ./console.py.
+- Use the available commands to interact with the application.
+
+***Dependencies***
 Python (>=3.8)
