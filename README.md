@@ -47,48 +47,30 @@ Here are some examples of how to use the command interpreter:
 
 Creating an instance of BaseModel:
 
-bash
-Copy code
 $ create BaseModel
 Showing an instance:
 
-bash
-Copy code
 $ show BaseModel 1234-1234-1234
 Destroying an instance:
 
-bash
-Copy code
 $ destroy BaseModel 1234-1234-1234
 Retrieving all instances of BaseModel:
 
-bash
-Copy code
 $ BaseModel.all()
 Retrieving the number of instances of BaseModel:
 
-bash
-Copy code
 $ BaseModel.count()
 Retrieving an instance by ID:
 
-bash
-Copy code
 $ BaseModel.show(1234-1234-1234)
 Destroying an instance by ID:
 
-bash
-Copy code
 $ BaseModel.destroy(1234-1234-1234)
 Updating an instance using attribute name and value:
 
-bash
-Copy code
 $ update BaseModel 1234-1234-1234 email "aibnb@mail.com"
 Updating an instance using a dictionary representation:
 
-bash
-Copy code
 $ update BaseModel 1234-1234-1234 {'email': 'aibnb@mail.com', 'first_name': 'John'}
 File Storage
 The File Storage class handles the serialization and deserialization of instances to and from a JSON file. It manages instances of the following classes: BaseModel, Place, State, City, Amenity, and Review.
@@ -100,6 +82,4 @@ Clone the repository.
 Run the command interpreter using ./console.py.
 Use the available commands to interact with the application.
 Dependencies
-Python (>=3.6)
-License
-This project is licensed under the [License Name] - see the LICENSE file for details.
+Python (>=3.8)
