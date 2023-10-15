@@ -85,10 +85,16 @@ $ BaseModel.destroy(1234-1234-1234)
 Updating an instance using attribute name and value:
 
 $ update BaseModel 1234-1234-1234 email "aibnb@mail.com"
+
+
 Updating an instance using a dictionary representation:
 
+```Bash
 $ update BaseModel 1234-1234-1234 {'email': 'aibnb@mail.com', 'first_name': 'John'}
-File Storage
+```
+<br>
+
+### File Storage
 The File Storage class handles the serialization and deserialization of instances to and from a JSON file. It manages instances of the following classes: BaseModel, Place, State, City, Amenity, and Review.
 
 ![start](imgs/img3.png)
