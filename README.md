@@ -40,30 +40,52 @@ Exits the program.
 <br>
 `destroy <class_name> <id>`: Deletes an instance based on the class name and ID, and saves the change to the JSON file.
 
-Example: $ destroy BaseModel 1234-1234-1234
-all [class_name]: Prints all string representations of instances of the specified class. If no class name is provided, it prints all instances of all classes.
 
-Example: 
+***Example***: 
 ```Bash
-$ all BaseModel
-<class_name>.all(): Retrieves all instances of the specified class.
+(hbnb) destroy BaseModel 1234-1234-1234
+```
 
-<class_name>.count(): Retrieves the number of instances of the specified class.
+<br>
 
-<class_name>.show(<id>): Retrieves an instance based on its ID.
+`all [class_name]`: Prints all string representations of instances of the specified class. If no class name is provided, it prints all instances of all classes.
 
-<class_name>.destroy(<id>): Destroys an instance based on its ID.
 
-<class_name>.update(<id>, <attribute_name>, <attribute_value>): Updates an instance by adding or updating an attribute.
+***Example***: 
+```Bash
+(hbnb) all BaseModel
+```
 
-<class_name>.update(<id>, <dictionary_representation>): Updates an instance using a dictionary representation.
+`<class_name>.all()`: Retrieves all instances of the specified class.
 
-Examples
+
+`<class_name>.count()`: Retrieves the number of instances of the specified class.
+
+
+`<class_name>.show(<id>)`: Retrieves an instance based on its ID.
+
+
+`<class_name>.destroy(<id>)`: Destroys an instance based on its ID.
+
+
+`<class_name>.update(<id>, <attribute_name>, <attribute_value>)`: Updates an instance by adding or updating an attribute.
+
+
+`<class_name>.update(<id>, <dictionary_representation>)`: Updates an instance using a dictionary representation.
+
+<br>
+
+***Examples***
+
+
 Here are some examples of how to use the command interpreter:
 
 Creating an instance of BaseModel:
 
-$ create BaseModel
+```Bash
+(hbnb) create BaseModel
+```
+
 Showing an instance:
 
 $ show BaseModel 1234-1234-1234
