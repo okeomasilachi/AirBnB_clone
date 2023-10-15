@@ -211,13 +211,13 @@ class HBNBCommand(cmd.Cmd):
                     if k["id"] == args[1]:
                         print(k)
                         return
-        except Exception:
-            pass
-        finally:
+
             if class_name:
                 print("** no instance found **")
             else:
                 print("** class doesn't exist **")
+        except Exception:
+            pass
 
     def help_show(self):
         """
