@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-""" This module contains the BaseModel class """
+""" This module contains the Place class """
 
 from models.base_model import BaseModel
 import datetime
@@ -9,6 +9,31 @@ from models import storage
 
 # The above class is a subclass of BaseModel and represents a Place.
 class Place(BaseModel):
+    """
+    The Place class represents a specific lodging location.
+
+    Attributes:
+        city_id (str): The unique identifier of the associated city.
+        user_id (str): The unique identifier of the associated user.
+        name (str): The name of the place.
+        description (str): A description of the place.
+        number_rooms (int): The number of rooms in the place.
+        number_bathrooms (int): The number of bathrooms in the place.
+        max_guest (int): The maximum number of guests the
+            place can accommodate.
+        price_by_night (int): The nightly price for staying at the place.
+        latitude (float): The latitude coordinates of the place.
+        longitude (float): The longitude coordinates of the place.
+        amenity_ids (list): A list of unique identifiers for
+            associated amenities.
+
+    Methods:
+        __init__(*args, **kwargs): Initializes a Place instance.
+        __str__(): Returns the string representation of a Place instance.
+        save(): Updates the 'updated_at' attribute and
+            saves the instance to storage.
+        to_dict(): Returns a dictionary representation of a Place instance.
+    """
 
     city_id = ""
     user_id = ""
@@ -23,9 +48,15 @@ class Place(BaseModel):
     amenity_ids = []
 
     def __init__(self, *args, **kwargs):
-        """
-        initializes the attributes email, password, first_name,
-        and last_name with empty strings.
+        """Initializes a Place instance.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        If keyword arguments are provided, attributes are set accordingly.
+        If no arguments are provided, calls the superclass's __init__ method.
+
         """
         if kwargs:
             for key, value in kwargs.items():
@@ -41,6 +72,9 @@ class Place(BaseModel):
         return f"[{__class__.__name__}] ({self.id}) ({self.__dict__})"
 
     def save(self):
+        """Updates the 'updated_at' attribute and saves
+        the instance to storage.
+        """
         self.updated_at = datetime.datetime.now()
         now = self.__dict__
         now['__class__'] = self.__class__.__name__
@@ -51,6 +85,7 @@ class Place(BaseModel):
         storage.save()
 
     def to_dict(self):
+        """Returns a dictionary representation of a Place instance."""
         now = self.__dict__
         now['__class__'] = self.__class__.__name__
         return now

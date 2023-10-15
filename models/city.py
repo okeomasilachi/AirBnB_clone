@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-""" This module contains the BaseModel class """
+""" This module contains the City class """
 
 from models.base_model import BaseModel
 import datetime
@@ -9,14 +9,34 @@ from models import storage
 
 # The above class is a subclass of BaseModel and represents a City.
 class City(BaseModel):
+    """
+    The City class represents a specific city and its associated state.
+
+    Attributes:
+        state_id (str): The unique identifier of the associated state.
+        name (str): The name of the city.
+
+    Methods:
+        __init__(*args, **kwargs): Initializes a City instance.
+        __str__(): Returns the string representation of a City instance.
+        save(): Updates the 'updated_at' attribute and saves
+            the instance to storage.
+        to_dict(): Returns a dictionary representation of a City instance.
+    """
 
     state_id = ""
     name = ""
 
     def __init__(self, *args, **kwargs):
-        """
-        initializes the attributes email, password, first_name,
-        and last_name with empty strings.
+        """Initializes a City instance.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        If keyword arguments are provided, attributes are set accordingly.
+        If no arguments are provided, calls the superclass's __init__ method.
+
         """
         if kwargs:
             for key, value in kwargs.items():
@@ -32,6 +52,9 @@ class City(BaseModel):
         return f"[{__class__.__name__}] ({self.id}) ({self.__dict__})"
 
     def save(self):
+        """Updates the 'updated_at' attribute and saves the
+        instance to storage.
+        """
         self.updated_at = datetime.datetime.now()
         now = self.__dict__
         now['__class__'] = self.__class__.__name__
@@ -42,6 +65,7 @@ class City(BaseModel):
         storage.save()
 
     def to_dict(self):
+        """Returns a dictionary representation of a City instance."""
         now = self.__dict__
         now['__class__'] = self.__class__.__name__
         return now
