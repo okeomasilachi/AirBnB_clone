@@ -4,118 +4,102 @@
     width: 100%;
     border: 1px solid #DDDDDD;
     border-radius: 4px;
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
-.filters button {
+button {
     font-size: 18px;
     background-color: #FF5A5F;
-    color: #FFFFFF;
+    color: white;
     height: 48px;
     width: 20%;
     border: none;
     border-radius: 4px;
-    position:absolute;
-    top: 10px;
+    position: absolute;
     right: 30px;
 }
 
-.filters button span {
-    text-align: center;
+button:hover {
+    opacity: 0.9;
 }
 
-.filters button:hover {
-    opacity: 0.9;
+
+.filters div {
+    display: grid;
+    align-content: flex-start;
+    justify-items: start;
 }
 
 .filters .locations,
 .filters .amenities {
-    position: absolute;
     height: 100%;
     width: 25%;
-    padding: 0;
-    margin: 0;
+    position: static;
+}
+
+h3 {
+    font-weight: 600;
+    margin-top: 50px;
+    margin-bottom: 0;
+}
+
+h4 {
+    font-weight: 400;
+    font-size: 14px;
+    display: block;
+}
+
+h4, h3 {
+    margin-inline-start: 30px;
+    margin-block-start: 10px;
 }
 
 .filters .locations {
     border-right: 1px solid #DDDDDD;
 }
 
-
-.filters .locations h3,
-.filters .locations h4,
-.filters .amenities h3,
-.filters .amenities h4 {
-    position: relative;
-    left: 25%;
-    display: table;
-}
-
-
-.filters .amenities {
-    position: absolute;
-    left: 25.2%;
-}
-
-.filters h3 {
-    font-weight: 600;
-    color: black;
-    margin-bottom: -15px;
-}
-
-.filters h4 {
-    font-weight: 400;
-    font-size: 14px;
-    color: black;
-}
-
-.filters .popover {
+.locations .popover,
+.amenities .popover {
     display: none;
-    position: absolute;
     background-color: #FAFAFA;
     width: 100%;
     border: 1px solid #DDDDDD;
     border-radius: 4px;
-    padding: 0;
-    margin: 0;
-    top: 70px;
+    padding: 10px 0;
 }
 
-.filters .popover ul {
-    padding: 10px;
-    list-style-type: none;
-    margin: 15px 0;
-}
-
-
-.filters .popover ul ul {
-    padding: 0;
-    margin-bottom: 10px;
-}
-
-.filters .popover ul li {
-    display: flex;
-    flex-direction: column;
-    font-size: 16px;
-}
-
-.filters .locations .popover li,
-.filters .amenities .popover li {
-    display: table;
-    position: relative;
-    left: 23%;
-    bottom: 0;
-    margin-right: auto;
-}
-
-.filters .locations:hover .popover,
-.filters .amenities:hover .popover {
+.locations:hover .popover,
+.amenities:hover .popover {
     display: block;
     right: 0;
     left: 0;
+    z-index: 1;
+    margin-top: -3px;
 }
 
-.filters .locations h2 {
-    display: inline-block;
+ul {
+    padding-left: 0px;
+    margin-top: -3px;
+    padding-bottom: 30px;
+}
+
+li {
+    list-style-type: none;
+    display: table;
+    margin-inline-start: 28px;
+    margin-top: 10px;
+    margin-inline: 39px;
+}
+
+.popover ul h2 {
     font-size: 16px;
-    margin-inline-start: 25px;
+    padding-right: 10px;
+    margin-left: 30px;
+    margin-bottom: 5px;
+}
+
+.popover ul li {
+    margin-top: 0;
 }
